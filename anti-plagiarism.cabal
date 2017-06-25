@@ -13,8 +13,28 @@ build-type:          Simple
 cabal-version:       >=1.10
 extra-source-files:  README.md
 
-executable anti-plagiarism
+library
   hs-source-dirs:      src
-  main-is:             Main.hs
+  exposed-modules:     Plagiarisms
+                       Types
+                       Utils
   default-language:    Haskell2010
-  build-depends:       base >= 4.7 && < 5
+  build-depends:       attoparsec
+                     , base >= 4.7 && < 5
+                     , random
+                     , random-shuffle
+                     , text
+                     , transformers
+  ghc-options:         -Wall -O2
+
+test-suite test
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             Spec.hs
+  build-depends:       anti-plagiarism
+                     , base >= 4.7 && < 5
+                     , directory
+                     , filepath
+                     , text
+  default-language:    Haskell2010
+  ghc-options:         -Wall -O2 -threaded
