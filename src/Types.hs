@@ -3,13 +3,12 @@ module Types
     Options (..)
   , TextOrder (..)
   , TextStruct (..)
-  , randomGen
   ) where
 
 import           Data.Function (on)
 import           Data.Monoid   ((<>))
 import           Data.Text     (Text)
-import           System.Random (StdGen, mkStdGen)
+import           System.Random (StdGen)
 
 data Options = Options
                { breakToPar   :: Text -> [Text]
@@ -17,6 +16,7 @@ data Options = Options
                , textOrder    :: TextOrder
                , maxNumOfElem :: {-# UNPACK #-} !Int
                , maxNumOfPar  :: {-# UNPACK #-} !Int
+               , randElemGen  :: {-# UNPACK #-} !StdGen
                }
 
 data TextOrder = Original
@@ -32,6 +32,3 @@ instance Eq TextStruct where
   x == y = ((==) `on` paragraph) x y && ((==) `on` element) x y
 instance Ord TextStruct where
   compare x y = (compare `on` paragraph) x y <> (compare `on` element) x y
-
-randomGen :: StdGen
-randomGen = mkStdGen 123
