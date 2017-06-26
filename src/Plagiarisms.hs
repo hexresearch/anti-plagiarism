@@ -12,11 +12,11 @@ import qualified Data.Text                 as T
 import           System.Random.Shuffle     (shuffle')
 
 import           Types                     (Options (..), TextOrder (..),
-                                            TextStruct (..), randomGen)
+                                            TextStruct (..))
 
 plagiarisms :: Options -> [Text] -> Text
-plagiarisms opt = flattenText . groupAndSort .
-                  getRandomElems (maxNumOfElem opt) . structText opt
+plagiarisms opt = flattenText . groupAndSort . getRandomElems opt .
+                  structText opt
   where groupAndSort :: [TextStruct] -> [[TextStruct]]
         groupAndSort xs =
           case textOrder opt of
@@ -40,12 +40,9 @@ structText opt = concatMap structPar . zip [0 ..] . concatMap (breakToPar opt)
                                          , content   = text
                                          }
 
-getRandomElems :: Int -> [TextStruct] -> [TextStruct]
-getRandomElems n xs
-  | numOfElem > n = take n randElems
-  | otherwise     = randElems
-  where numOfElem = length xs
-        randElems = shuffle' xs (length xs) randomGen
+getRandomElems :: Options -> [TextStruct] -> [TextStruct]
+getRandomElems opt xs = take (maxNumOfElem opt) $
+                        shuffle' xs (length xs) (randElemGen opt)
 
 groupByPar :: Int -> [TextStruct] -> [[TextStruct]]
 groupByPar n = map concat . groups . groupBy ((==) `on` paragraph)
