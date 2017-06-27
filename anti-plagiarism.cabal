@@ -15,16 +15,24 @@ extra-source-files:  README.md
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Plagiarisms
+  exposed-modules:     Data.HXR.AP.LSH
+                       Plagiarisms
                        Types
                        Utils
+  other-modules:       Data.HXR.AP.LSH.StaticData
   default-language:    Haskell2010
   build-depends:       attoparsec
                      , base >= 4.7 && < 5
+                     , bifunctors
+                     , containers
+                     , data-default
+                     , hashable
                      , random
                      , random-shuffle
                      , text
                      , transformers
+                     , vector
+                     , vector-instances
   ghc-options:         -Wall -O2
 
 test-suite test
