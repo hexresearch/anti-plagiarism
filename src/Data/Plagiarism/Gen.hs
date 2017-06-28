@@ -1,21 +1,22 @@
-module Plagiarisms
+module Data.Plagiarism.Gen
   (
-    plagiarisms
+    plagiarism
   ) where
 
+import           Control.Monad
 import           Control.Monad.Trans.State (evalState, state)
 import           Data.Function             (on)
-import           Data.List                 (groupBy, sort, sortBy)
+import           Data.List                 (group, groupBy, sort, sortBy)
 import           Data.Ord                  (comparing)
 import           Data.Text                 (Text)
 import qualified Data.Text                 as T
 import           System.Random.Shuffle     (shuffle')
 
-import           Types                     (Options (..), TextOrder (..),
+import           Data.Plagiarism.Types     (Options (..), TextOrder (..),
                                             TextStruct (..))
 
-plagiarisms :: Options -> [Text] -> Text
-plagiarisms opt = flattenText . groupAndSort . getRandomElems opt .
+plagiarism :: Options -> [Text] -> (Text, [Int])
+plagiarism opt = (\xs -> (flattenText xs, getSourceIds xs)) . groupAndSort . getRandomElems opt .
                   structText opt
   where groupAndSort :: [TextStruct] -> [[TextStruct]]
         groupAndSort xs =
@@ -26,19 +27,24 @@ plagiarisms opt = flattenText . groupAndSort . getRandomElems opt .
                           sortBy (comparing paragraph) xs
             RandomAll  -> groupByPar (maxNumOfPar opt) xs
 
+
         flattenText :: [[TextStruct]] -> Text
         flattenText = concatPar . map (concatElem . map content)
           where concatPar  = T.intercalate (T.pack "\n\n")
                 concatElem = T.intercalate (T.pack " ")
 
+        getSourceIds :: [[TextStruct]] -> [Int]
+        getSourceIds = fmap head . group . sort . fmap source . join
+
 structText :: Options -> [Text] -> [TextStruct]
-structText opt = concatMap structPar . zip [0 ..] . concatMap (breakToPar opt)
-  where structPar (n, par)  = zipWith3 structElem (repeat n) [0 ..]
+structText opt = concatMap structPar . zip [0 ..] . concatMap (\(n, txt) -> fmap (n,) $ breakToPar opt txt) . zip [0 ..]
+  where structPar (n, (m, par))  = zipWith (structElem m n) [0 ..]
                               (breakToElem opt par)
-        structElem n k text = TextStruct { paragraph = n
-                                         , element   = k
-                                         , content   = text
-                                         }
+        structElem m n k text = TextStruct { source    = m
+                                           , paragraph = n
+                                           , element   = k
+                                           , content   = text
+                                           }
 
 getRandomElems :: Options -> [TextStruct] -> [TextStruct]
 getRandomElems opt xs = take (maxNumOfElem opt) $

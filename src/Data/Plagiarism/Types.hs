@@ -1,4 +1,4 @@
-module Types
+module Data.Plagiarism.Types
   (
     Options (..)
   , TextOrder (..)
@@ -24,10 +24,12 @@ data TextOrder = Original
                | RandomAll
 
 data TextStruct = TextStruct
-                  { paragraph :: {-# UNPACK #-} !Int
+                  { source    :: {-# UNPACK #-} !Int
+                  , paragraph :: {-# UNPACK #-} !Int
                   , element   :: {-# UNPACK #-} !Int
                   , content   :: {-# UNPACK #-} !Text
                   }
+
 instance Eq TextStruct where
   x == y = ((==) `on` paragraph) x y && ((==) `on` element) x y
 instance Ord TextStruct where
