@@ -10,10 +10,8 @@ import           System.Directory      (listDirectory)
 import           System.FilePath.Posix ((</>))
 import           System.Random         (getStdGen)
 
-import           Data.HXR.AP.LSH       (TextRep (..), hashedShingles, kJaccard)
-import           Plagiarisms           (plagiarisms)
-import           Types                 (Options (..), TextOrder (..))
-import           Utils                 (breakByEmptyLine, breakToSentences)
+import           Data.Plagiarism
+import           Data.Plagiarism.Utils (breakByEmptyLine, breakToSentences)
 
 main :: IO ()
 main = do
@@ -24,11 +22,10 @@ main = do
   let opt    = Options
                { breakToPar   = breakByEmptyLine
                , breakToElem  = breakToSentences
-               , textOrder    = Original
+               , textOrder    = RandomElem
                , maxNumOfElem = 20
                , maxNumOfPar  = 5
                , randElemGen  = gen
                }
-      pieces = plagiarisms opt texts
-  putStr "Jaccard: "
-  print $ (kJaccard `on` hashedShingles . LshTextK9) (T.concat texts) pieces
+      pieces = fst $ plagiarism opt texts
+  putStr $ T.unpack pieces
