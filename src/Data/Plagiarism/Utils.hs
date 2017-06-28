@@ -1,4 +1,4 @@
-module Utils
+module Data.Plagiarism.Utils
   (
     breakByEmptyLine
   , breakToSentences
