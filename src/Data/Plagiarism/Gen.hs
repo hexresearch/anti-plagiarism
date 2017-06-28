@@ -15,6 +15,10 @@ import           System.Random.Shuffle     (shuffle')
 import           Data.Plagiarism.Types     (Options (..), TextOrder (..),
                                             TextStruct (..))
 
+-- | Creates plagiarism data out of provided corpus of texts.
+--
+-- It's not intended to use dlazily on the whole corpus of texts.
+-- Please consider making a random subset oftexts before applying this function.
 plagiarism :: Options -> [Text] -> (Text, [Int])
 plagiarism opt = (\xs -> (flattenText xs, getSourceIds xs)) . groupAndSort . getRandomElems opt .
                   structText opt

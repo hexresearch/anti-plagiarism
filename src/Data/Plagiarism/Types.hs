@@ -11,8 +11,8 @@ import           Data.Text     (Text)
 import           System.Random (StdGen)
 
 data Options = Options
-               { breakToPar   :: Text -> [Text]
-               , breakToElem  :: Text -> [Text]
+               { breakToPar   :: Text -> [Text]       -- ^ Breaks to paragraphs (chunks)
+               , breakToElem  :: Text -> [Text]       -- ^ Breaks paragraphs to elements (chunks/stems)
                , textOrder    :: TextOrder
                , maxNumOfElem :: {-# UNPACK #-} !Int
                , maxNumOfPar  :: {-# UNPACK #-} !Int
